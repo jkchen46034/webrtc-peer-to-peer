@@ -8,3 +8,8 @@
 	Copy the Answer from the 2nd Windows to the 1st Window
 	Click on Add Answer on the first Window.
 
+## screenshots
+
+![screenshot](screenshots/screen1.png)
+![screenshot](screenshots/screen2.png)
+![screenshot](screenshots/screen3.png)
