@@ -1,6 +1,7 @@
 let localStream;
 let remoteStream;
-let peerConnection;
+let localPeerConnection;
+let remotePeerConnection;
 
 let servers = {
   iceServers: [
@@ -16,52 +17,52 @@ let init = async () => {
 }
 
 let createOffer = async () => {
-  peerConnection = new RTCPeerConnection(servers)
+  localPeerConnection = new RTCPeerConnection(servers)
 
   remoteStream = new MediaStream()
   document.getElementById('user-2').srcObject = remoteStream 
 
   localStream.getTracks().forEach((track) => {
-    peerConnection.addTrack(track, localStream)
+    localPeerConnection.addTrack(track, localStream)
   })
 
-  peerConnection.ontrack = async(event) => {
+  localPeerConnection.ontrack = async(event) => {
     event.streams[0].getTracks().forEach((track)=>{
       remoteStream.addTrack(track)
     })
   }
 
-  peerConnection.onicecandidate = async(event) => {
+  localPeerConnection.onicecandidate = async(event) => {
     if (event.candidate) {
-      document.getElementById('offer-sdp').value = JSON.stringify(peerConnection.localDescription)
+      document.getElementById('offer-sdp').value = JSON.stringify(localPeerConnection.localDescription)
     }
   }
 
-  let offer = await peerConnection.createOffer()
+  let offer = await localPeerConnection.createOffer()
 
-  await peerConnection.setLocalDescription(offer)
+  await localPeerConnection.setLocalDescription(offer)
   document.getElementById('offer-sdp').value = JSON.stringify(offer) 
 }
 
 let createAnswer= async () => {
-  peerConnection = new RTCPeerConnection(servers)
+  remotePeerConnection = new RTCPeerConnection(servers)
 
   remoteStream = new MediaStream()
   document.getElementById('user-2').srcObject = remoteStream 
 
   localStream.getTracks().forEach((track) => {
-    peerConnection.addTrack(track, localStream)
+    remotePeerConnection.addTrack(track, localStream)
   })
 
-  peerConnection.ontrack = async(event) => {
+  remotePeerConnection.ontrack = async(event) => {
     event.streams[0].getTracks().forEach((track)=>{
       remoteStream.addTrack(track)
     })
   }
 
-  peerConnection.onicecandidate = async(event) => {
+  remotePeerConnection.onicecandidate = async(event) => {
     if (event.candidate) {
-      document.getElementById('answer-sdp').value = JSON.stringify(peerConnection.localDescription)
+      document.getElementById('answer-sdp').value = JSON.stringify(remotePeerConnection.localDescription)
     }
   }
 
@@ -69,10 +70,10 @@ let createAnswer= async () => {
   if (!offer) return alert("Retrieve offer from peer first ...")
 
   offer = JSON.parse(offer)
-  await peerConnection.setRemoteDescription(offer)
+  await remotePeerConnection.setRemoteDescription(offer)
 
-  let answer = await peerConnection.createAnswer()
-  await peerConnection.setLocalDescription(answer)
+  let answer = await remotePeerConnection.createAnswer()
+  await remotePeerConnection.setLocalDescription(answer)
 
   document.getElementById("answer-sdp").value = JSON.stringify(answer)
 }
@@ -82,8 +83,8 @@ let addAnswer = async() => {
   if (!answer) return alert('Retrieve answer from peer first ...')
 
   answer = JSON.parse(answer)
-  if (!peerConnection.currentRemoteDescription) {
-    peerConnection.setRemoteDescription(answer)
+  if (!localPeerConnection.currentRemoteDescription) {
+    localPeerConnection.setRemoteDescription(answer)
   }
 }
 
