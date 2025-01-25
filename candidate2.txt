@@ -1,0 +1,2 @@
+pc2 ICE candidate:
+candidate:3642500451 1 udp 2122194687 192.168.7.223 36956 typ host generation 0 ufrag 8wQs network-id 1 network-cost 10

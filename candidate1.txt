@@ -1,0 +1,3 @@
+pc1 addIceCandidate success
+candidate:2789097998 1 udp 2122265343 fd8e:7e80:3246:1:f00e:275:dbce:7026 35000 typ host generation 0 ufrag mme3 network-id 2 network-cost 10
+main.js:118 
